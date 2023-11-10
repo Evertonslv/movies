@@ -1,11 +1,12 @@
 {
-  "name": "filmes",
+  "name": "movies",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist",
-    "build": "rimraf dist && tsc -p tsconfig-build.json"
+    "start": "node dist/src",
+    "build": "rimraf dist && tsc -p tsconfig-build.json",
+    "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +31,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github/evertonslv/filmes"
+    "url": "https://github/evertonslv/movies"
   }
 }
