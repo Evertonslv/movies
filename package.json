@@ -4,12 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf dist && tsc"
+    "start": "node dist",
+    "build": "rimraf dist && tsc -p tsconfig-build.json"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "eslint": "^8.53.0",
+    "eslint-config-standard-with-typescript": "^39.1.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-promise": "^6.1.1",
     "typescript": "^5.2.2"
   },
   "engines": {
@@ -17,5 +24,9 @@
   },
   "dependencies": {
     "rimraf": "^5.0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github/evertonslv/filmes"
   }
 }
