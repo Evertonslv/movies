@@ -3,7 +3,7 @@
     "incremental": true,
     "outDir": "dist",
     "rootDirs": ["src", "test"],
-    "target": "es2021",
+    "target": "es2022",
     "sourceMap": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -22,5 +22,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src", "test"]
+  "include": [
+    "src",
+    "test"
+  ]
 }
