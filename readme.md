@@ -89,7 +89,7 @@ A documentação Swagger estará disponível em:
 http://localhost:3000/docs
 ```
 
-Para mais detalhes sobre a arquitetura do projeto acessar a pasta docs e abrir os arquivos csv.drawio e movie.drawio através do site a baixo:
+Para mais detalhes sobre a arquitetura do projeto acessar a pasta docs e abrir os arquivos csv.drawio e movie.drawio através do site abaixo:
 
 ```bash
 https://app.diagrams.net
