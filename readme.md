@@ -59,6 +59,12 @@ Certifique-se de ter os seguintes softwares instalados em seu sistema:
 
 ## Execução
 
+### Banco de dados
+
+Para alterar as informações do banco de dados, acessar o diretorio database/data.
+
+**Importante destacar que o arquivo deve ter o nome: _movielist.csv_**
+
 ### Desenvolvimento
 
 Para iniciar o servidor em modo de desenvolvimento:
@@ -81,4 +87,10 @@ A documentação Swagger estará disponível em:
 
 ```bash
 http://localhost:3000/docs
+```
+
+Para mais detalhes sobre a arquitetura do projeto acessar a pasta docs e abrir os arquivos csv.drawio e movie.drawio através do site a baixo:
+
+```bash
+https://app.diagrams.net
 ```
