@@ -2,7 +2,7 @@ import { Express } from 'express'
 import request from 'supertest'
 
 import { MovieRepository } from '@/domain/ports'
-import { ReadCsvUsecase } from '@/domain/usecases/read-csv-usecase'
+import { ReadCsvUsecase } from '@/domain/usecases'
 import { DbMovieRepository } from '@/infra/repositories'
 import { setupApp } from '@/main/config/app'
 

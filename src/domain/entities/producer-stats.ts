@@ -1,4 +1,6 @@
-export class ProducerStats {
+import { Producer } from '@/domain/models'
+
+export class ProducerStats implements Producer {
   public interval = 0
   public followingWin = 0
 

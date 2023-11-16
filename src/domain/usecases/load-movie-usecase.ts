@@ -32,8 +32,8 @@ export class LoadMovieUsecase implements MovieUsecase {
     return Object.values(producerStats).filter((producer) => producer.interval > 0)
   }
 
-  private splitProducers(producerString: string): string[] {
-    return producerString.split(/,| and | And | AND /i).map((p) => p.trim())
+  private splitProducers(producers: string): string[] {
+    return producers.split(/,| and | And | AND /i).map((p) => p.trim())
   }
 
   private getProducers(producersMax: Producer[], producersMin: Producer[]): ProducerList {
