@@ -13,7 +13,6 @@ export class DbMovieRepository implements MovieRepository {
     return await this.connection
       .getRepository(Movie)
       .createQueryBuilder('movie')
-      .where('movie.winner = :winner', { winner: true })
       .orderBy('movie.year')
       .getMany()
   }

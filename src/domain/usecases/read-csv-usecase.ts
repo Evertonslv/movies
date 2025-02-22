@@ -4,7 +4,10 @@ import { v4 as uuid } from 'uuid'
 
 import { MovieModel } from '@/domain/models'
 import { MovieRepository } from '@/domain/ports'
-import { CsvUsecase } from '@/domain/usecases'
+
+export interface CsvUsecase {
+  read: () => Promise<void>
+}
 
 export class ReadCsvUsecase implements CsvUsecase {
   constructor(private readonly filePath: string, private readonly movieRepository: MovieRepository) {

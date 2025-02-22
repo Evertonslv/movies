@@ -65,9 +65,9 @@ Para alterar as informações do banco de dados, acessar o diretorio database/da
 
 **Importante destacar que o arquivo deve ter o nome: _movielist.csv_**
 
-### Desenvolvimento
+### Inciar
 
-Para iniciar o servidor em modo de desenvolvimento:
+Para iniciar o servidor:
 
 ```bash
 npm run start:dev

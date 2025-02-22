@@ -13,8 +13,13 @@ export const connection = new DataSource({
   logging: false,
   synchronize: false,
   entities: [
-    'src/infra/entities/**.ts',
-    'dist/infra/entities/**.js'
+    process.env.NODE_ENV === 'prod'
+      ? 'dist/infra/entities/**.js'
+      : 'src/infra/entities/**.ts'
   ],
-  migrations: ['database/migrations/*{.ts,.js}']
+  migrations: [
+    process.env.NODE_ENV === 'prod'
+      ? 'dist/infra/database/migrations/*.js'
+      : 'src/infra/database/migrations/*.ts'
+  ]
 })

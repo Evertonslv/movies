@@ -4,7 +4,7 @@ import { readCsv } from '@/main/factories'
 
 import { connection } from '../../ormconfig'
 
-connection.initialize().then(async () => {
+void connection.initialize().then(async () => {
   await readCsv()
 
   const port = 3000

@@ -1,89 +1,87 @@
-import { ProducerStats } from '@/domain/entities'
-import { Producer, ProducerList } from '@/domain/models'
+import { MovieModel, Producer, ProducerList } from '@/domain/models'
 import { MovieRepository } from '@/domain/ports'
-import { MovieUsecase } from '@/domain/usecases'
+
+export interface MovieUsecase {
+  load: () => Promise<MovieUsecase.Result>
+}
+
+export namespace MovieUsecase {
+  export type Result = ProducerList
+}
 
 export class LoadMovieUsecase implements MovieUsecase {
-  private producerMaxStats: Record<string, ProducerStats>
-  private producerMinStats: Record<string, ProducerStats>
+  private producersMap: Record<string, number[]>
 
-  constructor(private readonly movieRepository: MovieRepository) {
-  }
+  constructor(private readonly movieRepository: MovieRepository) { }
 
   async load(): Promise<MovieUsecase.Result> {
-    await this.populateProducerStats()
-    const producersMax = this.filterProducersByInterval(this.producerMaxStats)
-    const producersMin = this.filterProducersByInterval(this.producerMinStats)
-    return this.getProducers(producersMax, producersMin)
-  }
+    this.producersMap = {}
 
-  private async populateProducerStats(): Promise<void> {
-    this.producerMaxStats = {}
-    this.producerMinStats = {}
     const movies = await this.movieRepository.load()
+    await this.populateProducerStats(movies)
 
-    for (const movie of movies) {
-      const producers = this.splitProducers(movie.producers)
-      this.updateProducerStats(producers, movie.year)
+    const allIntervals = this.calculateAllIntervals()
+    return {
+      max: this.getIntervalResults(allIntervals, 'max'),
+      min: this.getIntervalResults(allIntervals, 'min')
     }
   }
 
-  private filterProducersByInterval(producerStats: Record<string, ProducerStats>): Producer[] {
-    return Object.values(producerStats).filter((producer) => producer.interval > 0)
+  private async populateProducerStats(movies: MovieModel[]): Promise<void> {
+    const winningMovies = movies.filter(movie => movie.winner)
+
+    for (const movie of winningMovies) {
+      const producers = this.splitProducers(movie.producers)
+      producers.forEach(producer => { this.addProducerYear(producer, movie.year) })
+    }
   }
 
-  private splitProducers(producers: string): string[] {
-    return producers.split(/,| and | And | AND /i).map((p) => p.trim())
+  private addProducerYear(producer: string, year: number): void {
+    if (!producer) return
+    if (!this.producersMap[producer]) this.producersMap[producer] = []
+    this.producersMap[producer].push(year)
   }
 
-  private getProducers(producersMax: Producer[], producersMin: Producer[]): ProducerList {
-    const maxProducers = this.getMax(producersMax)
-    const minProducers = this.getMin(producersMin)
-    return { max: maxProducers, min: minProducers }
-  }
+  private calculateAllIntervals(): Producer[] {
+    const allIntervals: Producer[] = []
 
-  private getMax(producers: Producer[]): Producer[] {
-    const interval = Math.max(...producers.map((producer) => producer.interval))
-    return this.getTopProducersByInterval(producers, interval)
-  }
-
-  private getMin(producers: Producer[]): Producer[] {
-    const interval = Math.min(...producers.map((producer) => producer.interval))
-    return this.getTopProducersByInterval(producers, interval)
-  };
-
-  private updateProducerStats(producers: string[], previousWin: number): void {
-    producers.forEach((producer) => {
-      if (producer) {
-        this.addProducerMax(producer, previousWin)
-        this.addProducerMin(producer, previousWin)
+    Object.entries(this.producersMap).forEach(([producer, years]) => {
+      if (years.length < 2) return
+      const sortedYears = [...years].sort((a, b) => a - b)
+      for (let i = 1; i < sortedYears.length; i++) {
+        allIntervals.push({
+          producer,
+          interval: sortedYears[i] - sortedYears[i - 1],
+          previousWin: sortedYears[i - 1],
+          followingWin: sortedYears[i]
+        })
       }
     })
+
+    return allIntervals
   }
 
-  private getTopProducersByInterval(producers: Producer[], interval: number): Producer[] {
-    return producers
-      .filter((producer) => producer.interval === interval)
+  private getIntervalResults(allIntervals: Producer[], type: 'max' | 'min'): Producer[] {
+    if (allIntervals.length === 0) return []
+
+    const targetInterval = type === 'max'
+      ? Math.max(...allIntervals.map(i => i.interval))
+      : Math.min(...allIntervals.map(i => i.interval))
+
+    return allIntervals
+      .filter(i => i.interval === targetInterval)
+      .map(({ producer, interval, previousWin, followingWin }) => ({
+        producer,
+        interval,
+        previousWin,
+        followingWin
+      }))
       .sort((a, b) => a.producer.localeCompare(b.producer))
   }
 
-  private addProducerMax(producer: string, previousWin: number): void {
-    this.addProducerStats(producer, this.producerMaxStats, previousWin, true)
-  }
-
-  private addProducerMin(producer: string, previousWin: number): void {
-    this.addProducerStats(producer, this.producerMinStats, previousWin, false)
-  }
-
-  private addProducerStats(producer: string, stats: Record<string, ProducerStats>, previousWin: number, max: boolean): void {
-    const currentStats = stats[producer] || ProducerStats.create(producer, previousWin)
-
-    if (currentStats.interval === 0) {
-      currentStats.addFollowing(previousWin)
-    } else {
-      currentStats.updateProducer(previousWin, max)
-    }
-
-    stats[producer] = currentStats
+  private splitProducers(producers: string): string[] {
+    return producers.split(/\s*,\s*|\s+and\s+/i)
+      .map(p => p.trim())
+      .filter(p => p.length > 0)
   }
 }
